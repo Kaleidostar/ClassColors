@@ -12,13 +12,14 @@ if CUSTOM_CLASS_COLORS then
 	ns.alreadyLoaded = true
 	return
 end
+local category, layout
 
 CUSTOM_CLASS_COLORS = {}
 
 ------------------------------------------------------------------------
 
 local L = ns.L 
-L.TITLE = GetAddOnMetadata("!ClassColors", "Title")
+L.TITLE = C_AddOns.GetAddOnMetadata("!ClassColors", "Title")
 
 ------------------------------------------------------------------------
 
@@ -154,8 +155,12 @@ f:SetScript("OnEvent", function(self, event, addon)
 			db[class].colorStr = format("ff%02x%02x%02x", db[class].r * 255, db[class].g * 255, db[class].b * 255)
 		end
 
-		CUSTOM_CLASS_COLORS[class] = CreateColor(db[class].r, db[class].g, db[class].b)
-		CUSTOM_CLASS_COLORS[class].colorStr = db[class].colorStr
+		CUSTOM_CLASS_COLORS[class] = {
+			r = db[class].r,
+			g = db[class].g,
+			b = db[class].b,
+			colorStr = db[class].colorStr,
+		}
 	end
 
 	--------------------------------------------------------------------
@@ -371,14 +376,16 @@ f:SetScript("OnEvent", function(self, event, addon)
 
 	--------------------------------------------------------------------
 
-	InterfaceOptions_AddCategory(self)
+	category, layout = Settings.RegisterCanvasLayoutCategory(f, f.name, f.name);
+    category.ID = f.name 
+    Settings.RegisterAddOnCategory(category);
 
 	--------------------------------------------------------------------
 
 	SLASH_CLASSCOLORS1 = "/classcolors"
 	SlashCmdList.CLASSCOLORS = function()
-		InterfaceOptionsFrame_OpenToCategory(self)
-		InterfaceOptionsFrame_OpenToCategory(self)
+		Settings.OpenToCategory(category.ID)
+		Settings.OpenToCategory(category.ID)
 	end
 
 	--------------------------------------------------------------------
